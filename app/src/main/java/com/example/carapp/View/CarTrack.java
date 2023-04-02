@@ -1,6 +1,8 @@
-package com.example.carapp;
+package com.example.carapp.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,11 +13,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.carapp.Model.GameManager;
+import com.example.carapp.R;
+
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class CarTrack extends AppCompatActivity {
+public class CarTrack extends AppCompatActivity
+{
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////
@@ -23,10 +29,9 @@ public class CarTrack extends AppCompatActivity {
 
     ArrayList<ImageView> hearts=new ArrayList<>();
     ImageView[] carImages=new ImageView[3];
-    int[] carLocationArray=new int[3];
-
     ImageView[][] obstacleImages=new ImageView[6][3];
-    int[][] rockLocationMatrix=new int[6][3];
+    GameManager model;
+    Timer timer=null;
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,15 +41,27 @@ public class CarTrack extends AppCompatActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////
-    //OnCreate
+    //OnCreate/OnPause
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_track);
         initializeView();
+        model=new GameManager(this);
 
         startTimer();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        if(timer!=null)
+        {
+            timer.cancel();
+        }
     }
 
     //////////////////////////////////////////////////
@@ -59,14 +76,14 @@ public class CarTrack extends AppCompatActivity {
 
     private void startTimer()
     {
-        Timer timer=new Timer();
+        timer=new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run()
             {
                 runOnUiThread(() -> {
-                    moveRocks();
-                    addRock();
+                    model.moveRocks();
+                    model.addRock();
                     displayGameView();
                 });
             }
@@ -83,7 +100,7 @@ public class CarTrack extends AppCompatActivity {
     //////////////////////////////////////////////////
     //Remove heart method
 
-    private void removeHeart()
+    public void removeHeart()
     {
         if(hearts.size()>0)
         {
@@ -102,44 +119,6 @@ public class CarTrack extends AppCompatActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////
-    //Move car methods
-
-    private void moveCarLeft()
-    {
-        if(carLocationArray[1]==1)
-        {
-            carLocationArray[1]=0;
-            carLocationArray[0]=1;
-        }
-        else if(carLocationArray[2]==1)
-        {
-            carLocationArray[2]=0;
-            carLocationArray[1]=1;
-        }
-    }
-
-    private void moveCarRight()
-    {
-        if(carLocationArray[0]==1)
-        {
-            carLocationArray[0]=0;
-            carLocationArray[1]=1;
-        }
-        else if(carLocationArray[1]==1)
-        {
-            carLocationArray[1]=0;
-            carLocationArray[2]=1;
-        }
-    }
-
-    //////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////
     //Display game view methods
 
     private void displayGameView()
@@ -150,6 +129,7 @@ public class CarTrack extends AppCompatActivity {
 
     private void displayCar()
     {
+        int[] carLocationArray=model.getCarLocationArray();
         for (int i = 0; i < 3; i++)
         {
             if(carLocationArray[i]==0)
@@ -165,6 +145,7 @@ public class CarTrack extends AppCompatActivity {
 
     private void displayRocks()
     {
+        int[][] rockLocationMatrix=model.getRockLocationMatrix();
         for (int i = 0; i < rockLocationMatrix.length; i++)
         {
             for (int j = 0; j < rockLocationMatrix[0].length; j++)
@@ -178,123 +159,6 @@ public class CarTrack extends AppCompatActivity {
                     obstacleImages[i][j].setVisibility(View.VISIBLE);
                 }
             }
-        }
-    }
-
-    //////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////
-    //Add rocks methods
-
-    private void addRock()
-    {
-        int whereToPutRock=(int)(Math.random()*3);
-        if(isLaneFree(whereToPutRock))
-        {
-            rockLocationMatrix[0][whereToPutRock]=1;
-        }
-    }
-
-    private boolean isLaneFree(int laneNum)
-    {
-        for (int[] locationMatrix : rockLocationMatrix) {
-            if (locationMatrix[laneNum] == 1)
-                return false;
-        }
-        return true;
-    }
-
-    //////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////
-    //Move rocks methods
-
-    private void moveRocks()
-    {
-        moveRocksOnLeftLane();
-        moveRocksOnMiddleLane();
-        moveRocksOnRightLane();
-    }
-
-    private void moveRocksOnLeftLane()
-    {
-        for (int i = 0; i < rockLocationMatrix.length ; i++)
-        {
-            if(rockLocationMatrix[i][0]==1)
-            {
-                if(i<rockLocationMatrix.length-1)
-                {
-                    rockLocationMatrix[i][0]=0;
-                    rockLocationMatrix[i+1][0]=1;
-                }
-                else
-                {
-                    checkForImpact(0);
-                    rockLocationMatrix[i][0]=0;
-                }
-                return;
-            }
-        }
-    }
-
-    private void moveRocksOnMiddleLane()
-    {
-        for (int i = 0; i < rockLocationMatrix.length ; i++)
-        {
-            if(rockLocationMatrix[i][1]==1)
-            {
-                if(i<rockLocationMatrix.length-1)
-                {
-                    rockLocationMatrix[i][1]=0;
-                    rockLocationMatrix[i+1][1]=1;
-                }
-                else
-                {
-                    checkForImpact(1);
-                    rockLocationMatrix[i][1]=0;
-                }
-                return;
-            }
-        }
-    }
-
-    private void moveRocksOnRightLane()
-    {
-        for (int i = 0; i < rockLocationMatrix.length ; i++)
-        {
-            if(rockLocationMatrix[i][2]==1)
-            {
-                if(i<rockLocationMatrix.length-1)
-                {
-                    rockLocationMatrix[i][2]=0;
-                    rockLocationMatrix[i+1][2]=1;
-                }
-                else
-                {
-                    checkForImpact(2);
-                    rockLocationMatrix[i][2]=0;
-                }
-                return;
-            }
-        }
-    }
-
-    private void checkForImpact(int lane)
-    {
-        int len=rockLocationMatrix.length-1;
-        if((rockLocationMatrix[len][lane]==1)&&(carLocationArray[lane]==1))
-        {
-            removeHeart();
         }
     }
 
@@ -329,21 +193,18 @@ public class CarTrack extends AppCompatActivity {
         ImageButton moveRight=findViewById(R.id.CT_IB_Right);
         moveLeft.setOnClickListener(view->
         {
-            moveCarLeft();
+            model.moveCarLeft();
             displayGameView();
         });
         moveRight.setOnClickListener(view->
         {
-            moveCarRight();
+            model.moveCarRight();
             displayGameView();
         });
     }
 
     private void initializeCar()
     {
-        carLocationArray[0]=0;
-        carLocationArray[1]=1;
-        carLocationArray[2]=0;
         carImages[0]=findViewById(R.id.CT_IV_CarLeft);
         carImages[1]=findViewById(R.id.CT_IV_CarMiddle);
         carImages[2]=findViewById(R.id.CT_IV_CarRight);
