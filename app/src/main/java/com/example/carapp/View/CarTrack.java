@@ -1,9 +1,6 @@
 package com.example.carapp.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.OnLifecycleEvent;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.VibrationEffect;
@@ -12,10 +9,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.example.carapp.Model.GameManager;
 import com.example.carapp.R;
-
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -61,6 +56,17 @@ public class CarTrack extends AppCompatActivity
         if(timer!=null)
         {
             timer.cancel();
+            timer=null;
+        }
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        if (timer == null)
+        {
+            startTimer();
         }
     }
 

@@ -4,9 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-
 import com.example.carapp.R;
-import com.example.carapp.View.CarTrack;
 
 public class MainActivity extends AppCompatActivity {
 
