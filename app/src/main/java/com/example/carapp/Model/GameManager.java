@@ -2,6 +2,8 @@ package com.example.carapp.Model;
 
 import com.example.carapp.View.CarTrack;
 
+import java.util.Arrays;
+
 public class GameManager
 {
 
@@ -10,8 +12,20 @@ public class GameManager
     //Variables
 
     private final CarTrack view;
-    private final int[] carLocationArray=new int[3];
-    private final int[][] rockLocationMatrix=new int[6][3];
+    private final int[][] gameBoardMatrix = new int[8][5];
+
+    //Current Location of Obstacles
+    private final int[] obstacleLocation=new int[5];
+
+    //Current Location of Car
+    private int carCurrentLocation;
+
+    //Current Location of Special
+    private int specialLocationRow;
+    private int specialLocationCol;
+
+    //Odometer
+    int distance;
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,9 +40,31 @@ public class GameManager
     public GameManager(CarTrack view)
     {
         this.view=view;
-        carLocationArray[0]=0;
-        carLocationArray[1]=1;
-        carLocationArray[2]=0;
+        initializeCar();
+        initializeObstacleLocation();
+        initializeSpecial();
+        distance=0;
+    }
+
+    private void initializeCar()
+    {
+        gameBoardMatrix[7][0]=0;
+        gameBoardMatrix[7][1]=0;
+        gameBoardMatrix[7][2]=1;
+        gameBoardMatrix[7][3]=0;
+        gameBoardMatrix[7][4]=0;
+        carCurrentLocation=2;
+    }
+
+    private void initializeObstacleLocation()
+    {
+        Arrays.fill(obstacleLocation, -1);
+    }
+
+    private void initializeSpecial()
+    {
+        specialLocationRow=-1;
+        specialLocationCol=-1;
     }
 
     //////////////////////////////////////////////////
@@ -41,14 +77,28 @@ public class GameManager
     //////////////////////////////////////////////////
     //Getters
 
-    public int[] getCarLocationArray()
+    public int[][] getGameBoardMatrix()
     {
-        return carLocationArray;
+        return gameBoardMatrix;
     }
 
-    public int[][] getRockLocationMatrix()
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //Timer activation method
+
+    public void timedFunctions()
     {
-        return rockLocationMatrix;
+        moveObstacles();
+        moveSpecial();
+        addObstacle();
+        addSpecial();
+        distance+=10;
     }
 
     //////////////////////////////////////////////////
@@ -61,82 +111,89 @@ public class GameManager
     //////////////////////////////////////////////////
     //Move rocks methods
 
-    public void moveRocks()
+    private void moveObstacles()
     {
-        moveRocksOnLeftLane();
-        moveRocksOnMiddleLane();
-        moveRocksOnRightLane();
-    }
-
-    private void moveRocksOnLeftLane()
-    {
-        for (int i = 0; i < rockLocationMatrix.length ; i++)
+        for (int i = 0; i < obstacleLocation.length; i++)
         {
-            if(rockLocationMatrix[i][0]==1)
+            if(obstacleLocation[i]==gameBoardMatrix.length-1)//Obstacle reached end
             {
-                if(i<rockLocationMatrix.length-1)
+                gameBoardMatrix[obstacleLocation[i]][i] = 0;
+                obstacleLocation[i]=-1;
+            }
+            if(obstacleLocation[i]==gameBoardMatrix.length-2)//Obstacle can impact the car
+            {
+                if(checkForImpactWithObstacle(i))
                 {
-                    rockLocationMatrix[i][0]=0;
-                    rockLocationMatrix[i+1][0]=1;
+                    gameBoardMatrix[obstacleLocation[i]][i]=0;
+                    obstacleLocation[i]=-1;
                 }
-                else
-                {
-                    checkForImpact(0);
-                    rockLocationMatrix[i][0]=0;
-                }
-                return;
+            }
+            if(obstacleLocation[i]!=-1)//Move obstacle
+            {
+                gameBoardMatrix[obstacleLocation[i]++][i] = 0;
+                gameBoardMatrix[obstacleLocation[i]][i] = 2;
             }
         }
     }
 
-    private void moveRocksOnMiddleLane()
+    private boolean checkForImpactWithObstacle(int lane)
     {
-        for (int i = 0; i < rockLocationMatrix.length ; i++)
-        {
-            if(rockLocationMatrix[i][1]==1)
-            {
-                if(i<rockLocationMatrix.length-1)
-                {
-                    rockLocationMatrix[i][1]=0;
-                    rockLocationMatrix[i+1][1]=1;
-                }
-                else
-                {
-                    checkForImpact(1);
-                    rockLocationMatrix[i][1]=0;
-                }
-                return;
-            }
-        }
-    }
-
-    private void moveRocksOnRightLane()
-    {
-        for (int i = 0; i < rockLocationMatrix.length ; i++)
-        {
-            if(rockLocationMatrix[i][2]==1)
-            {
-                if(i<rockLocationMatrix.length-1)
-                {
-                    rockLocationMatrix[i][2]=0;
-                    rockLocationMatrix[i+1][2]=1;
-                }
-                else
-                {
-                    checkForImpact(2);
-                    rockLocationMatrix[i][2]=0;
-                }
-                return;
-            }
-        }
-    }
-
-    private void checkForImpact(int lane)
-    {
-        int len=rockLocationMatrix.length-1;
-        if((rockLocationMatrix[len][lane]==1)&&(carLocationArray[lane]==1))
+        if(gameBoardMatrix[7][lane]==1)
         {
             view.removeHeart();
+            return true;
+        }
+        return false;
+    }
+
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //Move special methods
+
+    private void moveSpecial()
+    {
+        if(specialLocationRow==gameBoardMatrix.length-1)//Special reached end
+        {
+            conditionalRemoveSpecial();
+            gameBoardMatrix[specialLocationRow][specialLocationCol]=0;
+            initializeSpecial();
+        }
+        if (specialLocationRow==gameBoardMatrix.length-2)
+        {
+            if(checkForImpactWithSpecial())
+            {
+                conditionalRemoveSpecial();
+                initializeSpecial();
+            }
+        }
+        if((specialLocationRow!=-1)&&(specialLocationCol!=-1))//Move special
+        {
+            conditionalRemoveSpecial();
+            gameBoardMatrix[++specialLocationRow][specialLocationCol]=3;
+        }
+    }
+
+    private boolean checkForImpactWithSpecial()
+    {
+        if(gameBoardMatrix[specialLocationRow+1][specialLocationCol]==1)
+        {
+            view.addHeart();
+            return true;
+        }
+        return false;
+    }
+
+    private void conditionalRemoveSpecial()//checks the possibility that an obstacle has overlapped the current location of Special
+    {
+        if(gameBoardMatrix[specialLocationRow][specialLocationCol]==3)
+        {
+            gameBoardMatrix[specialLocationRow][specialLocationCol]=0;
         }
     }
 
@@ -152,61 +209,91 @@ public class GameManager
 
     public void moveCarLeft()
     {
-        if(carLocationArray[1]==1)
+        if(carCurrentLocation!=0)
         {
-            carLocationArray[1]=0;
-            carLocationArray[0]=1;
-        }
-        else if(carLocationArray[2]==1)
-        {
-            carLocationArray[2]=0;
-            carLocationArray[1]=1;
+            checkCarMovementLeft();
+            gameBoardMatrix[7][carCurrentLocation--]=0;
+            gameBoardMatrix[7][carCurrentLocation]=1;
         }
     }
 
     public void moveCarRight()
     {
-        if(carLocationArray[0]==1)
+        if(carCurrentLocation!=4)
         {
-            carLocationArray[0]=0;
-            carLocationArray[1]=1;
-        }
-        else if(carLocationArray[1]==1)
-        {
-            carLocationArray[1]=0;
-            carLocationArray[2]=1;
+            checkCarMovementRight();
+            gameBoardMatrix[7][carCurrentLocation++]=0;
+            gameBoardMatrix[7][carCurrentLocation]=1;
         }
     }
 
-    //////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////
-    //Add rocks methods
-
-    public void addRock()
+    private void checkCarMovementLeft()
     {
-        int whereToPutRock=(int)(Math.random()*3);
-        if(isLaneFree(whereToPutRock))
+        if(gameBoardMatrix[7][carCurrentLocation-1]==2)
         {
-            rockLocationMatrix[0][whereToPutRock]=1;
+            gameBoardMatrix[7][carCurrentLocation-1]=0;
+            obstacleLocation[carCurrentLocation-1]=-1;
+            view.removeHeart();
+        }
+        else if(gameBoardMatrix[7][carCurrentLocation-1]==3)
+        {
+            conditionalRemoveSpecial();
+            initializeSpecial();
+            view.addHeart();
         }
     }
 
-    private boolean isLaneFree(int laneNum)
+    private void checkCarMovementRight()
     {
-        for (int[] locationMatrix : rockLocationMatrix) {
-            if (locationMatrix[laneNum] == 1)
-                return false;
+        if(gameBoardMatrix[7][carCurrentLocation+1]==2)
+        {
+            gameBoardMatrix[7][carCurrentLocation+1]=0;
+            obstacleLocation[carCurrentLocation+1]=-1;
+            view.removeHeart();
         }
-        return true;
+        else if(gameBoardMatrix[7][carCurrentLocation+1]==3)
+        {
+            conditionalRemoveSpecial();
+            initializeSpecial();
+            view.addHeart();
+        }
     }
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //Add Obstacle and Special methods
+
+    private void addObstacle()
+    {
+        int randomLocation=(int)(Math.random()*5);
+        if(obstacleLocation[randomLocation]==-1)
+        {
+            gameBoardMatrix[0][randomLocation]=2;
+            obstacleLocation[randomLocation]=0;
+        }
+    }
+
+    private void addSpecial()
+    {
+        if(((specialLocationRow==-1)&&(specialLocationCol==-1))&&((distance%200==0)&&(distance!=0)))
+        {
+            int randomLocation=(int)(Math.random()*5);
+            if(obstacleLocation[randomLocation]!=0)
+            {
+                specialLocationRow=0;
+                specialLocationCol=randomLocation;
+                gameBoardMatrix[specialLocationRow][specialLocationCol]=3;
+            }
+        }
+    }
+
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    
 }

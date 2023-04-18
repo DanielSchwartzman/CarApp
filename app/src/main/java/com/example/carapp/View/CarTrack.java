@@ -8,10 +8,10 @@ import android.os.Vibrator;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.example.carapp.Model.GameManager;
 import com.example.carapp.R;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -22,11 +22,13 @@ public class CarTrack extends AppCompatActivity
     //////////////////////////////////////////////////
     //Variables
 
-    ArrayList<ImageView> hearts=new ArrayList<>();
-    ImageView[] carImages=new ImageView[3];
-    ImageView[][] obstacleImages=new ImageView[6][3];
+    ImageView[] hearts=new ImageView[3];
+    ImageView[][] allImages =new ImageView[8][5];
     GameManager model;
     Timer timer=null;
+
+    String gameMode;
+    int currentLife;
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,10 +45,11 @@ public class CarTrack extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_track);
+        gameMode=getIntent().getStringExtra("GameMode");
         initializeView();
         model=new GameManager(this);
 
-        startTimer();
+        chooseTimer();
     }
 
     @Override
@@ -66,7 +69,34 @@ public class CarTrack extends AppCompatActivity
         super.onResume();
         if (timer == null)
         {
-            startTimer();
+            chooseTimer();
+        }
+    }
+
+    private void chooseTimer()
+    {
+        switch(gameMode)
+        {
+            case "Slow":
+            {
+                startTimerSlow();
+                break;
+            }
+            case "Medium":
+            {
+                startTimerMedium();
+                break;
+            }
+            case "Fast":
+            {
+                startTimerFast();
+                break;
+            }
+            case "Sensor":
+            {
+                startTimerSensor();
+                break;
+            }
         }
     }
 
@@ -80,20 +110,70 @@ public class CarTrack extends AppCompatActivity
     //////////////////////////////////////////////////
     //Timer methods
 
-    private void startTimer()
+    private void startTimerSlow()
     {
         timer=new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run()
             {
-                runOnUiThread(() -> {
-                    model.moveRocks();
-                    model.addRock();
+                runOnUiThread(() ->
+                {
+                    model.timedFunctions();
+                    displayGameView();
+                });
+            }
+        }, 0, 1000);
+    }
+
+    private void startTimerMedium()
+    {
+        timer=new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run()
+            {
+                runOnUiThread(() ->
+                {
+                    model.timedFunctions();
                     displayGameView();
                 });
             }
         }, 0, 500);
+    }
+
+    private void startTimerFast()
+    {
+        timer=new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run()
+            {
+                runOnUiThread(() ->
+                {
+                    model.timedFunctions();
+                    displayGameView();
+                });
+            }
+        }, 0, 200);
+    }
+
+    private void startTimerSensor()
+    {
+        LinearLayout linearLayout=findViewById(R.id.CT_LL_movement);
+        linearLayout.setVisibility(View.GONE);
+        timer=new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run()
+            {
+                runOnUiThread(() ->
+                {
+                    model.timedFunctions();
+                    displayGameView();
+                });
+            }
+        }, 0, 1000);
     }
 
     //////////////////////////////////////////////////
@@ -108,15 +188,25 @@ public class CarTrack extends AppCompatActivity
 
     public void removeHeart()
     {
-        if(hearts.size()>0)
+        if(currentLife>0)
         {
-            hearts.get(hearts.size()-1).setVisibility(View.INVISIBLE);
-            hearts.remove(hearts.size()-1);
+            hearts[currentLife-1].setVisibility(View.GONE);
+            currentLife--;
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
             Toast.makeText(getApplicationContext(),"Crash",Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void addHeart()
+    {
+        if(currentLife<3)
+        {
+            hearts[currentLife].setVisibility(View.VISIBLE);
+            currentLife++;
+        }
+    }
+
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -129,40 +219,26 @@ public class CarTrack extends AppCompatActivity
 
     private void displayGameView()
     {
-        displayCar();
-        displayRocks();
-    }
-
-    private void displayCar()
-    {
-        int[] carLocationArray=model.getCarLocationArray();
-        for (int i = 0; i < 3; i++)
-        {
-            if(carLocationArray[i]==0)
-            {
-                carImages[i].setVisibility(View.INVISIBLE);
-            }
-            else
-            {
-                carImages[i].setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
-    private void displayRocks()
-    {
-        int[][] rockLocationMatrix=model.getRockLocationMatrix();
+        int[][] rockLocationMatrix=model.getGameBoardMatrix();
         for (int i = 0; i < rockLocationMatrix.length; i++)
         {
             for (int j = 0; j < rockLocationMatrix[0].length; j++)
             {
-                if(rockLocationMatrix[i][j]==0)
+                if(rockLocationMatrix[i][j]==0)//Void
                 {
-                    obstacleImages[i][j].setVisibility(View.INVISIBLE);
+                    allImages[i][j].setBackgroundResource(android.R.color.transparent);
                 }
-                else
+                else if(rockLocationMatrix[i][j]==1)//Car
                 {
-                    obstacleImages[i][j].setVisibility(View.VISIBLE);
+                    allImages[i][j].setBackgroundResource(R.drawable.car);
+                }
+                else if(rockLocationMatrix[i][j]==2)//Rock
+                {
+                    allImages[i][j].setBackgroundResource(R.drawable.obstacle);
+                }
+                else if(rockLocationMatrix[i][j]==3)//Special
+                {
+                    allImages[i][j].setBackgroundResource(R.drawable.special);
                 }
             }
         }
@@ -181,16 +257,16 @@ public class CarTrack extends AppCompatActivity
     private void initializeView()
     {
         initializeHearths();
-        initializeCar();
         initializeMovement();
-        initializeObstacles();
+        initializeObstaclesAndCars();
     }
 
     private void initializeHearths()
     {
-        hearts.add(findViewById(R.id.CT_IV_heart1));
-        hearts.add(findViewById(R.id.CT_IV_heart2));
-        hearts.add(findViewById(R.id.CT_IV_heart3));
+        hearts[0]=findViewById(R.id.CT_IV_heart1);
+        hearts[1]=findViewById(R.id.CT_IV_heart2);
+        hearts[2]=findViewById(R.id.CT_IV_heart3);
+        currentLife=3;
     }
 
     private void initializeMovement()
@@ -209,14 +285,7 @@ public class CarTrack extends AppCompatActivity
         });
     }
 
-    private void initializeCar()
-    {
-        carImages[0]=findViewById(R.id.CT_IV_CarLeft);
-        carImages[1]=findViewById(R.id.CT_IV_CarMiddle);
-        carImages[2]=findViewById(R.id.CT_IV_CarRight);
-    }
-
-    private void initializeObstacles()
+    private void initializeObstaclesAndCars()
     {
         initializeFirstImageRow();
         initializeSecondImageRow();
@@ -224,48 +293,80 @@ public class CarTrack extends AppCompatActivity
         initializeFourthImageRow();
         initializeFifthImageRow();
         initializeSixthImageRow();
+        initializeSeventhImageRow();
+        initializeEighthImageRow();
     }
 
     private void initializeFirstImageRow()
     {
-        obstacleImages[0][0]=findViewById(R.id.CT_IV_Obstacle00);
-        obstacleImages[0][1]=findViewById(R.id.CT_IV_Obstacle01);
-        obstacleImages[0][2]=findViewById(R.id.CT_IV_Obstacle02);
+        allImages[0][0]=findViewById(R.id.CT_IV_Obstacle00);
+        allImages[0][1]=findViewById(R.id.CT_IV_Obstacle01);
+        allImages[0][2]=findViewById(R.id.CT_IV_Obstacle02);
+        allImages[0][3]=findViewById(R.id.CT_IV_Obstacle03);
+        allImages[0][4]=findViewById(R.id.CT_IV_Obstacle04);
     }
 
     private void initializeSecondImageRow()
     {
-        obstacleImages[1][0]=findViewById(R.id.CT_IV_Obstacle10);
-        obstacleImages[1][1]=findViewById(R.id.CT_IV_Obstacle11);
-        obstacleImages[1][2]=findViewById(R.id.CT_IV_Obstacle12);
+        allImages[1][0]=findViewById(R.id.CT_IV_Obstacle10);
+        allImages[1][1]=findViewById(R.id.CT_IV_Obstacle11);
+        allImages[1][2]=findViewById(R.id.CT_IV_Obstacle12);
+        allImages[1][3]=findViewById(R.id.CT_IV_Obstacle13);
+        allImages[1][4]=findViewById(R.id.CT_IV_Obstacle14);
     }
 
     private void initializeThirdImageRow()
     {
-        obstacleImages[2][0]=findViewById(R.id.CT_IV_Obstacle20);
-        obstacleImages[2][1]=findViewById(R.id.CT_IV_Obstacle21);
-        obstacleImages[2][2]=findViewById(R.id.CT_IV_Obstacle22);
+        allImages[2][0]=findViewById(R.id.CT_IV_Obstacle20);
+        allImages[2][1]=findViewById(R.id.CT_IV_Obstacle21);
+        allImages[2][2]=findViewById(R.id.CT_IV_Obstacle22);
+        allImages[2][3]=findViewById(R.id.CT_IV_Obstacle23);
+        allImages[2][4]=findViewById(R.id.CT_IV_Obstacle24);
     }
 
     private void initializeFourthImageRow()
     {
-        obstacleImages[3][0]=findViewById(R.id.CT_IV_Obstacle30);
-        obstacleImages[3][1]=findViewById(R.id.CT_IV_Obstacle31);
-        obstacleImages[3][2]=findViewById(R.id.CT_IV_Obstacle32);
+        allImages[3][0]=findViewById(R.id.CT_IV_Obstacle30);
+        allImages[3][1]=findViewById(R.id.CT_IV_Obstacle31);
+        allImages[3][2]=findViewById(R.id.CT_IV_Obstacle32);
+        allImages[3][3]=findViewById(R.id.CT_IV_Obstacle33);
+        allImages[3][4]=findViewById(R.id.CT_IV_Obstacle34);
     }
 
     private void initializeFifthImageRow()
     {
-        obstacleImages[4][0]=findViewById(R.id.CT_IV_Obstacle40);
-        obstacleImages[4][1]=findViewById(R.id.CT_IV_Obstacle41);
-        obstacleImages[4][2]=findViewById(R.id.CT_IV_Obstacle42);
+        allImages[4][0]=findViewById(R.id.CT_IV_Obstacle40);
+        allImages[4][1]=findViewById(R.id.CT_IV_Obstacle41);
+        allImages[4][2]=findViewById(R.id.CT_IV_Obstacle42);
+        allImages[4][3]=findViewById(R.id.CT_IV_Obstacle43);
+        allImages[4][4]=findViewById(R.id.CT_IV_Obstacle44);
     }
 
     private void initializeSixthImageRow()
     {
-        obstacleImages[5][0]=findViewById(R.id.CT_IV_Obstacle50);
-        obstacleImages[5][1]=findViewById(R.id.CT_IV_Obstacle51);
-        obstacleImages[5][2]=findViewById(R.id.CT_IV_Obstacle52);
+        allImages[5][0]=findViewById(R.id.CT_IV_Obstacle50);
+        allImages[5][1]=findViewById(R.id.CT_IV_Obstacle51);
+        allImages[5][2]=findViewById(R.id.CT_IV_Obstacle52);
+        allImages[5][3]=findViewById(R.id.CT_IV_Obstacle53);
+        allImages[5][4]=findViewById(R.id.CT_IV_Obstacle54);
+    }
+
+    private void initializeSeventhImageRow()
+    {
+        allImages[6][0]=findViewById(R.id.CT_IV_Obstacle60);
+        allImages[6][1]=findViewById(R.id.CT_IV_Obstacle61);
+        allImages[6][2]=findViewById(R.id.CT_IV_Obstacle62);
+        allImages[6][3]=findViewById(R.id.CT_IV_Obstacle63);
+        allImages[6][4]=findViewById(R.id.CT_IV_Obstacle64);
+    }
+
+    private void initializeEighthImageRow()
+    {
+        allImages[7][0]=findViewById(R.id.CT_IV_Obstacle70);
+        allImages[7][1]=findViewById(R.id.CT_IV_Obstacle71);
+        allImages[7][2]=findViewById(R.id.CT_IV_Obstacle72);
+        allImages[7][3]=findViewById(R.id.CT_IV_Obstacle73);
+        allImages[7][4]=findViewById(R.id.CT_IV_Obstacle74);
     }
 
     //////////////////////////////////////////////////

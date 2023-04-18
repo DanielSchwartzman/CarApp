@@ -4,24 +4,62 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Toast;
+
 import com.example.carapp.R;
 
 public class MainActivity extends AppCompatActivity {
+
+    String gameMode;
+    RadioGroup radioGroup;
+    RadioButton radioButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        radioGroup=findViewById(R.id.main_RGP_radioGroup);
         initializeButtons();
     }
 
     private void initializeButtons()
     {
-        Button startGame=findViewById(R.id.main_btn_startGame);
+        Button startGame=findViewById(R.id.main_BTN_startGame);
+        Button leaderBoard=findViewById(R.id.main_BTN_leaderBoard);
         startGame.setOnClickListener(view->
         {
-            Intent switchToCarActivity=new Intent(getApplicationContext(), CarTrack.class);
-            startActivity(switchToCarActivity);
+            if(checkButton())
+            {
+                Intent switchToCarActivity=new Intent(getApplicationContext(), CarTrack.class);
+                switchToCarActivity.putExtra("GameMode",gameMode);
+                startActivity(switchToCarActivity);
+            }
+            else
+            {
+                Toast.makeText(this, "Please select game mode", Toast.LENGTH_SHORT).show();
+            }
         });
+        leaderBoard.setOnClickListener(view->
+        {
+            Intent switchToLeaderBoardActivity=new Intent(getApplicationContext(), LeaderBoard.class);
+            startActivity(switchToLeaderBoardActivity);
+        });
+    }
+
+    public boolean checkButton()
+    {
+        int radioID=radioGroup.getCheckedRadioButtonId();
+        radioButton=findViewById(radioID);
+        if(radioButton!=null)
+        {
+            gameMode = radioButton.getText().toString();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

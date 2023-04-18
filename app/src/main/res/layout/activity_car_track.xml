@@ -10,7 +10,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="horizontal">
 
         <TextView
@@ -23,7 +24,7 @@
         <ImageView
             android:id="@+id/CT_IV_heart3"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
             android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:contentDescription="image3"
@@ -33,7 +34,7 @@
         <ImageView
             android:id="@+id/CT_IV_heart2"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
             android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:contentDescription="image2"
@@ -43,7 +44,7 @@
         <ImageView
             android:id="@+id/CT_IV_heart1"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
             android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:contentDescription="image1"
@@ -53,20 +54,23 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="630dp"
+        android:layout_height="0dp"
+        android:layout_weight="12"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="90dp"
-            android:orientation="horizontal">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            tools:ignore="NestedWeights">
 
             <ImageView
                 android:id="@+id/CT_IV_Obstacle00"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -74,7 +78,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -82,13 +86,30 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle03"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle04"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="90dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <ImageView
@@ -96,7 +117,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -104,7 +125,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -112,7 +133,23 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle13"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle14"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
 
@@ -126,7 +163,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -134,7 +171,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -142,13 +179,30 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle23"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle24"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="90dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <ImageView
@@ -156,7 +210,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -164,7 +218,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -172,13 +226,30 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle33"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle34"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="90dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <ImageView
@@ -186,7 +257,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -194,7 +265,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -202,13 +273,30 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle43"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle44"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="90dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <ImageView
@@ -216,7 +304,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -224,7 +312,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
@@ -232,56 +320,138 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/obstacle"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle53"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle54"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="90dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/CT_IV_CarLeft"
+                android:id="@+id/CT_IV_Obstacle60"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/car"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
-                android:id="@+id/CT_IV_CarMiddle"
+                android:id="@+id/CT_IV_Obstacle61"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/car"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
 
             <ImageView
-                android:id="@+id/CT_IV_CarRight"
+                android:id="@+id/CT_IV_Obstacle62"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/car"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle63"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle64"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle70"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle71"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle72"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle73"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/CT_IV_Obstacle74"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@android:color/transparent"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/CT_LL_movement"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="horizontal"
         tools:ignore="VisualLintBounds">
 
         <ImageButton
             android:id="@+id/CT_IB_Left"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="@color/black"
             android:contentDescription="button left"
             app:srcCompat="@android:drawable/ic_media_rew"
-            tools:ignore="HardcodedText,RedundantDescriptionCheck" />
+            tools:ignore="HardcodedText,NestedWeights,RedundantDescriptionCheck" />
 
         <TextView
             android:id="@+id/CT_TV_NullSpace2"
@@ -294,7 +464,7 @@
         <ImageButton
             android:id="@+id/CT_IB_Right"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="@color/black"
             android:contentDescription="button right"
