@@ -2,6 +2,10 @@ package com.example.carapp.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -29,6 +33,11 @@ public class CarTrack extends AppCompatActivity
 
     String gameMode;
     int currentLife;
+
+    SensorManager sensorManager;
+    Sensor gyroSensor;
+    private SensorEventListener gyroEventListener;
+    private float rollAngle = 0.0f;
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,6 +70,7 @@ public class CarTrack extends AppCompatActivity
             timer.cancel();
             timer=null;
         }
+        sensorManager.unregisterListener(gyroEventListener);
     }
 
     @Override
@@ -71,6 +81,7 @@ public class CarTrack extends AppCompatActivity
         {
             chooseTimer();
         }
+        sensorManager.registerListener(gyroEventListener,gyroSensor,SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     private void chooseTimer()
@@ -94,10 +105,63 @@ public class CarTrack extends AppCompatActivity
             }
             case "Sensor":
             {
+                initializeSensor();
                 startTimerSensor();
                 break;
             }
         }
+    }
+
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //Sensor methods
+
+    private void initializeSensor()
+    {
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        gyroSensor=sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+
+        if(gyroSensor==null)
+        {
+            Toast.makeText(this,"Gyroscope sensor is not available on the device",Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+        gyroEventListener=new SensorEventListener()
+        {
+            @Override
+            public void onSensorChanged(SensorEvent event)
+            {
+                if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE)
+                {
+                    float deltaRoll = event.values[2] * (180 / (float) Math.PI) * (event.timestamp - rollAngle) / 1000000000.0f;
+                    rollAngle = event.timestamp;
+
+                    if (deltaRoll < -2.0f)
+                    {
+                        model.moveCarRight();
+                        displayGameView();
+                    }
+                    else if (deltaRoll > 2.0f)
+                    {
+                        model.moveCarLeft();
+                        displayGameView();
+                    }
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy)
+            {
+                //Do nothing
+            }
+        };
     }
 
     //////////////////////////////////////////////////
