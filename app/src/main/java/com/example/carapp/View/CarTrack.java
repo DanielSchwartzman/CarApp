@@ -6,6 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -26,18 +27,22 @@ public class CarTrack extends AppCompatActivity
     //////////////////////////////////////////////////
     //Variables
 
+    //Basic
     ImageView[] hearts=new ImageView[3];
     ImageView[][] allImages =new ImageView[8][5];
     GameManager model;
     Timer timer=null;
-
     String gameMode;
     int currentLife;
 
+    //Sensors
     SensorManager sensorManager;
     Sensor gyroSensor;
     private SensorEventListener gyroEventListener;
     private float rollAngle = 0.0f;
+
+    //Audio
+    private MediaPlayer mediaPlayer;
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,6 +62,7 @@ public class CarTrack extends AppCompatActivity
         gameMode=getIntent().getStringExtra("GameMode");
         initializeView();
         model=new GameManager(this);
+        mediaPlayer=MediaPlayer.create(this, R.raw.crash_sound);
 
         chooseTimer();
     }
@@ -70,7 +76,8 @@ public class CarTrack extends AppCompatActivity
             timer.cancel();
             timer=null;
         }
-        sensorManager.unregisterListener(gyroEventListener);
+        if(sensorManager!=null)
+            sensorManager.unregisterListener(gyroEventListener);
     }
 
     @Override
@@ -81,7 +88,8 @@ public class CarTrack extends AppCompatActivity
         {
             chooseTimer();
         }
-        sensorManager.registerListener(gyroEventListener,gyroSensor,SensorManager.SENSOR_DELAY_NORMAL);
+        if(sensorManager!=null)
+            sensorManager.registerListener(gyroEventListener,gyroSensor,SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     private void chooseTimer()
@@ -259,6 +267,7 @@ public class CarTrack extends AppCompatActivity
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
             Toast.makeText(getApplicationContext(),"Crash",Toast.LENGTH_SHORT).show();
+            playCrash();
         }
     }
 
@@ -269,6 +278,23 @@ public class CarTrack extends AppCompatActivity
             hearts[currentLife].setVisibility(View.VISIBLE);
             currentLife++;
         }
+    }
+
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //Play crush sound
+
+    private void playCrash()
+    {
+        if (mediaPlayer!=null) mediaPlayer.release();
+        mediaPlayer = MediaPlayer.create(this, R.raw.crash_sound);
+        mediaPlayer.start();
     }
 
     //////////////////////////////////////////////////
