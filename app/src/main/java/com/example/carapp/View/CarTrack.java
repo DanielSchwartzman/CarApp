@@ -18,26 +18,30 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.carapp.Data.MySP3;
+import com.example.carapp.Data.HighScore;
+import com.example.carapp.Data.MySP;
 import com.example.carapp.Model.GameManager;
 import com.example.carapp.R;
 import com.google.gson.Gson;
-
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class CarTrack extends AppCompatActivity
-{
+public class CarTrack extends AppCompatActivity {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////
     //Variables
 
     //Basic
-    ImageView[] hearts=new ImageView[3];
-    ImageView[][] allImages =new ImageView[8][5];
+    ImageView[] hearts = new ImageView[3];
+    ImageView[][] allImages = new ImageView[8][5];
     GameManager model;
-    Timer timer=null;
+    Timer timer = null;
     String gameMode;
     int currentLife;
     TextView score;
@@ -51,9 +55,6 @@ public class CarTrack extends AppCompatActivity
     //Audio
     private MediaPlayer mediaPlayer;
 
-    public static final String SHARED_PREFS="sharedPrefs";
-    public static final String SCORE ="score";
-
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -65,64 +66,53 @@ public class CarTrack extends AppCompatActivity
     //OnCreate/OnPause
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_track);
-        gameMode=getIntent().getStringExtra("GameMode");
+        gameMode = getIntent().getStringExtra("GameMode");
         initializeView();
-        model=new GameManager(this);
-        mediaPlayer=MediaPlayer.create(this, R.raw.crash_sound);
+        model = new GameManager(this);
+        mediaPlayer = MediaPlayer.create(this, R.raw.crash_sound);
 
         chooseTimer();
     }
 
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         super.onPause();
-        if(timer!=null)
-        {
+        if (timer != null) {
             timer.cancel();
-            timer=null;
+            timer = null;
         }
-        if(sensorManager!=null)
+        if (sensorManager != null)
             sensorManager.unregisterListener(gyroEventListener);
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
-        if (timer == null)
-        {
+        if (timer == null) {
             chooseTimer();
         }
-        if(sensorManager!=null)
-            sensorManager.registerListener(gyroEventListener,gyroSensor,SensorManager.SENSOR_DELAY_NORMAL);
+        if (sensorManager != null)
+            sensorManager.registerListener(gyroEventListener, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    private void chooseTimer()
-    {
-        switch(gameMode)
-        {
-            case "Slow":
-            {
+    private void chooseTimer() {
+        switch (gameMode) {
+            case "Slow": {
                 startTimerSlow();
                 break;
             }
-            case "Medium":
-            {
+            case "Medium": {
                 startTimerMedium();
                 break;
             }
-            case "Fast":
-            {
+            case "Fast": {
                 startTimerFast();
                 break;
             }
-            case "Sensor":
-            {
+            case "Sensor": {
                 initializeSensor();
                 startTimerSensor();
                 break;
@@ -140,18 +130,16 @@ public class CarTrack extends AppCompatActivity
     //////////////////////////////////////////////////
     //Sensor methods
 
-    private void initializeSensor()
-    {
+    private void initializeSensor() {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        gyroSensor=sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
-        if(gyroSensor==null)
-        {
-            Toast.makeText(this,"Gyroscope sensor is not available on the device",Toast.LENGTH_SHORT).show();
+        if (gyroSensor == null) {
+            Toast.makeText(this, "Gyroscope sensor is not available on the device", Toast.LENGTH_SHORT).show();
             finish();
         }
 
-        gyroEventListener=new SensorEventListener()
+        gyroEventListener = new SensorEventListener()
         {
             @Override
             public void onSensorChanged(SensorEvent event)
@@ -161,13 +149,10 @@ public class CarTrack extends AppCompatActivity
                     float deltaRoll = event.values[2] * (180 / (float) Math.PI) * (event.timestamp - rollAngle) / 1000000000.0f;
                     rollAngle = event.timestamp;
 
-                    if (deltaRoll < -2.0f)
-                    {
+                    if (deltaRoll < -2.0f) {
                         model.moveCarRight();
                         displayGameView();
-                    }
-                    else if (deltaRoll > 2.0f)
-                    {
+                    } else if (deltaRoll > 2.0f) {
                         model.moveCarLeft();
                         displayGameView();
                     }
@@ -194,11 +179,10 @@ public class CarTrack extends AppCompatActivity
 
     private void startTimerSlow()
     {
-        timer=new Timer();
+        timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void run()
-            {
+            public void run() {
                 runOnUiThread(() ->
                 {
                     model.timedFunctions();
@@ -210,11 +194,10 @@ public class CarTrack extends AppCompatActivity
 
     private void startTimerMedium()
     {
-        timer=new Timer();
+        timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void run()
-            {
+            public void run() {
                 runOnUiThread(() ->
                 {
                     model.timedFunctions();
@@ -226,11 +209,10 @@ public class CarTrack extends AppCompatActivity
 
     private void startTimerFast()
     {
-        timer=new Timer();
+        timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void run()
-            {
+            public void run() {
                 runOnUiThread(() ->
                 {
                     model.timedFunctions();
@@ -242,10 +224,11 @@ public class CarTrack extends AppCompatActivity
 
     private void startTimerSensor()
     {
-        LinearLayout linearLayout=findViewById(R.id.CT_LL_movement);
+        LinearLayout linearLayout = findViewById(R.id.CT_LL_movement);
         linearLayout.setVisibility(View.GONE);
-        timer=new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask()
+        {
             @Override
             public void run()
             {
@@ -270,28 +253,25 @@ public class CarTrack extends AppCompatActivity
 
     public void removeHeart()
     {
-        if(currentLife>1)
+        if (currentLife > 1)
         {
-            hearts[currentLife-1].setVisibility(View.GONE);
+            hearts[currentLife - 1].setVisibility(View.GONE);
             currentLife--;
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-            Toast.makeText(getApplicationContext(),"Crash",Toast.LENGTH_SHORT).show();
             playCrash();
         }
         else
         {
-            saveScore();
-            Intent switchToLeaderBoardActivity=new Intent(getApplicationContext(), LeaderBoard.class);
+            checkHighScore(model.getDistance(),0,0);
+            Intent switchToLeaderBoardActivity = new Intent(getApplicationContext(), LeaderBoard.class);
             startActivity(switchToLeaderBoardActivity);
             finish();
         }
     }
 
-    public void addHeart()
-    {
-        if(currentLife<3)
-        {
+    public void addHeart() {
+        if (currentLife < 3) {
             hearts[currentLife].setVisibility(View.VISIBLE);
             currentLife++;
         }
@@ -305,11 +285,50 @@ public class CarTrack extends AppCompatActivity
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////
+    //Check for highScore
+
+    public void checkHighScore(int distance,double longitude,double latitude)
+    {
+        String fromSP =  MySP.getInstance().getString("leaderBoard","");
+        if(!Objects.equals(fromSP, ""))
+        {
+            Type listOfMyClassObject = new TypeToken<Queue<HighScore>>() {}.getType();
+            Queue<HighScore> savedQueue = new Gson().fromJson(fromSP,listOfMyClassObject);
+            if(savedQueue!=null)
+            {
+                if (!savedQueue.peek().isHigherThan(distance))
+                {
+                    HighScore highScore = new HighScore(distance, longitude, latitude);
+                    savedQueue.add(highScore);
+                    if(savedQueue.size()>=10)
+                        savedQueue.remove();
+                    String toSp=new Gson().toJson(savedQueue);
+                    MySP.getInstance().putString("leaderBoard",toSp);
+                }
+            }
+        }
+        else
+        {
+            Queue<HighScore> highScores=new LinkedList<>();
+            HighScore highScore = new HighScore(distance, longitude, latitude);
+            highScores.add(highScore);
+            String toSp=new Gson().toJson(highScores);
+            MySP.getInstance().putString("leaderBoard",toSp);
+        }
+    }
+
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
     //Play crush sound
 
-    private void playCrash()
-    {
-        if (mediaPlayer!=null) mediaPlayer.release();
+    private void playCrash() {
+        if (mediaPlayer != null) mediaPlayer.release();
         mediaPlayer = MediaPlayer.create(this, R.raw.crash_sound);
         mediaPlayer.start();
     }
@@ -324,48 +343,27 @@ public class CarTrack extends AppCompatActivity
     //////////////////////////////////////////////////
     //Display game view methods
 
-    private void displayGameView()
-    {
-        int[][] rockLocationMatrix=model.getGameBoardMatrix();
-        String scoreText=model.getDistance()+"";
+    private void displayGameView() {
+        int[][] rockLocationMatrix = model.getGameBoardMatrix();
+        String scoreText = model.getDistance() + "";
         score.setText(scoreText);
-        for (int i = 0; i < rockLocationMatrix.length; i++)
-        {
-            for (int j = 0; j < rockLocationMatrix[0].length; j++)
-            {
-                if(rockLocationMatrix[i][j]==0)//Void
+        for (int i = 0; i < rockLocationMatrix.length; i++) {
+            for (int j = 0; j < rockLocationMatrix[0].length; j++) {
+                if (rockLocationMatrix[i][j] == 0)//Void
                 {
                     allImages[i][j].setBackgroundResource(android.R.color.transparent);
-                }
-                else if(rockLocationMatrix[i][j]==1)//Car
+                } else if (rockLocationMatrix[i][j] == 1)//Car
                 {
                     allImages[i][j].setBackgroundResource(R.drawable.car);
-                }
-                else if(rockLocationMatrix[i][j]==2)//Rock
+                } else if (rockLocationMatrix[i][j] == 2)//Rock
                 {
                     allImages[i][j].setBackgroundResource(R.drawable.obstacle);
-                }
-                else if(rockLocationMatrix[i][j]==3)//Special
+                } else if (rockLocationMatrix[i][j] == 3)//Special
                 {
                     allImages[i][j].setBackgroundResource(R.drawable.special);
                 }
             }
         }
-    }
-
-    //////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////
-    //Save score methods
-
-    public void saveScore()
-    {
-        MySP3.getInstance().putString(SCORE,model.getDistance()+"");
     }
 
     //////////////////////////////////////////////////

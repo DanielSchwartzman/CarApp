@@ -2,18 +2,33 @@ package com.example.carapp.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-
 import com.example.carapp.Fragments.FragmentList;
 import com.example.carapp.Fragments.FragmentMap;
 import com.example.carapp.R;
 
-public class LeaderBoard extends AppCompatActivity {
+public class LeaderBoard extends AppCompatActivity
+{
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //Variables
 
     private FragmentList listView;
     private FragmentMap mapView;
 
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //On create and initialization
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leader_board);
         initializeFragments();
@@ -31,4 +46,7 @@ public class LeaderBoard extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().add(R.id.leaderBoard_FRAME_list, listView).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.leaderBoard_FRAME_map, mapView).commit();
     }
+
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 }
