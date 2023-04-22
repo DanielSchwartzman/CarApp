@@ -2,6 +2,7 @@ package com.example.carapp.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -14,9 +15,14 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.carapp.Data.MySP3;
 import com.example.carapp.Model.GameManager;
 import com.example.carapp.R;
+import com.google.gson.Gson;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -34,6 +40,7 @@ public class CarTrack extends AppCompatActivity
     Timer timer=null;
     String gameMode;
     int currentLife;
+    TextView score;
 
     //Sensors
     SensorManager sensorManager;
@@ -43,6 +50,9 @@ public class CarTrack extends AppCompatActivity
 
     //Audio
     private MediaPlayer mediaPlayer;
+
+    public static final String SHARED_PREFS="sharedPrefs";
+    public static final String SCORE ="score";
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -256,11 +266,11 @@ public class CarTrack extends AppCompatActivity
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////
-    //Remove heart method
+    //Remove heart/score method
 
     public void removeHeart()
     {
-        if(currentLife>0)
+        if(currentLife>1)
         {
             hearts[currentLife-1].setVisibility(View.GONE);
             currentLife--;
@@ -268,6 +278,13 @@ public class CarTrack extends AppCompatActivity
             v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
             Toast.makeText(getApplicationContext(),"Crash",Toast.LENGTH_SHORT).show();
             playCrash();
+        }
+        else
+        {
+            saveScore();
+            Intent switchToLeaderBoardActivity=new Intent(getApplicationContext(), LeaderBoard.class);
+            startActivity(switchToLeaderBoardActivity);
+            finish();
         }
     }
 
@@ -310,6 +327,8 @@ public class CarTrack extends AppCompatActivity
     private void displayGameView()
     {
         int[][] rockLocationMatrix=model.getGameBoardMatrix();
+        String scoreText=model.getDistance()+"";
+        score.setText(scoreText);
         for (int i = 0; i < rockLocationMatrix.length; i++)
         {
             for (int j = 0; j < rockLocationMatrix[0].length; j++)
@@ -342,6 +361,21 @@ public class CarTrack extends AppCompatActivity
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////
+    //Save score methods
+
+    public void saveScore()
+    {
+        MySP3.getInstance().putString(SCORE,model.getDistance()+"");
+    }
+
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
     //Initialize view methods
 
     private void initializeView()
@@ -349,6 +383,7 @@ public class CarTrack extends AppCompatActivity
         initializeHearths();
         initializeMovement();
         initializeObstaclesAndCars();
+        score=findViewById(R.id.carTrack_TXT_score);
     }
 
     private void initializeHearths()

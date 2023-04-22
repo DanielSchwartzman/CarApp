@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.FragmentMap">
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
+    <WebView
+        android:id="@+id/Frag_WEBV_webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </FrameLayout>
