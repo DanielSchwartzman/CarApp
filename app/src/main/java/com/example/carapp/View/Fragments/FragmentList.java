@@ -1,23 +1,26 @@
-package com.example.carapp.Fragments;
+package com.example.carapp.View.Fragments;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import androidx.fragment.app.Fragment;
-import com.example.carapp.R;
 
-public class FragmentMap extends Fragment
+import com.example.carapp.General_Singletons.MySP;
+import com.example.carapp.R;
+import com.example.carapp.View.RecycleContents.HighScoreAdapter;
+
+public class FragmentList extends Fragment
 {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////
     //Variables
 
-    private WebView webView;
+    RecyclerView recyclerView;
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,34 +36,31 @@ public class FragmentMap extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        View view= inflater.inflate(R.layout.fragment_map, container, false);
-        initializeWebView(view);
-        setWebUrl(32.0853+""+34.7818);
+        View view = inflater.inflate(R.layout.fragment_list, container, false);
+        findViews(view);
+        initViews();
         return view;
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    private void initializeWebView(View view)
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //Find and initialize views
+
+    private void findViews(View view)
     {
-        webView =view.findViewById(R.id.Frag_WEBV_webView);
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
+        recyclerView=view.findViewById(R.id.listFrag_REC_recView);
     }
 
-    //////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////
-    //Set url
-
-    public void setWebUrl(String location)
+    private void initViews()
     {
-        String urlStart = "https://www.google.com/maps/place/";
-        webView.loadUrl(urlStart+location);
+        recyclerView.setLayoutManager(new LinearLayoutManager(super.getContext()));
+        recyclerView.setAdapter(new HighScoreAdapter(super.getContext(), MySP.getHighScoreList()));
     }
 
     //////////////////////////////////////////////////

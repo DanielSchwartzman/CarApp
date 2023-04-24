@@ -1,7 +1,9 @@
-package com.example.carapp.Data;
+package com.example.carapp.General_Singletons;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import com.example.carapp.HighScore.HighScoreList;
+import com.google.gson.Gson;
 
 public class MySP
 {
@@ -13,6 +15,7 @@ public class MySP
     private static final String DB_FILE = "DB_FILE";
     private static MySP instance = null;
     private static SharedPreferences sharedPreferences = null;
+    private static HighScoreList highScoreList;
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,6 +35,13 @@ public class MySP
     public static void init(Context context){
         if (instance == null){
             instance = new MySP(context);
+            String fromSP =  MySP.getInstance().getString("leaderBoard","");
+            if(!fromSP.equals(""))
+                highScoreList=new Gson().fromJson(fromSP, HighScoreList.class);
+            else
+            {
+                highScoreList = new HighScoreList();
+            }
         }
     }
 
@@ -69,20 +79,24 @@ public class MySP
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////
-    //Integer methods
+    //Variables
 
-    public void putInt(String key, int value)
+    public static HighScoreList getHighScoreList()
     {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(key, value);
-        editor.apply();
+        return highScoreList;
     }
 
-    public int getInt(String key, int value) {
-        return sharedPreferences.getInt(key, value);
+    public static void saveToSharedPref()
+    {
+        String toSp=new Gson().toJson(highScoreList);
+        MySP.getInstance().putString("leaderBoard",toSp);
+    }
+
+    public static void addNewHighScore(int score, double longitude, double latitude)
+    {
+        highScoreList.addNewHighScore(score,longitude,latitude);
     }
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
 }

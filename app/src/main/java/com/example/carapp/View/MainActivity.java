@@ -7,12 +7,11 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-
-import com.example.carapp.Data.MySP;
 import com.example.carapp.R;
 
 public class MainActivity extends AppCompatActivity
 {
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////
     //Variables
@@ -38,12 +37,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         radioGroup=findViewById(R.id.main_RGP_radioGroup);
         initializeButtons();
-        initSingletons();
-    }
-
-    private void initSingletons()
-    {
-        MySP.init(this);
     }
 
     //////////////////////////////////////////////////

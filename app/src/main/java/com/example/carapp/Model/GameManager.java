@@ -1,7 +1,6 @@
 package com.example.carapp.Model;
 
 import com.example.carapp.View.CarTrack;
-
 import java.util.Arrays;
 
 public class GameManager

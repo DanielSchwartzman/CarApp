@@ -1,0 +1,69 @@
+package com.example.carapp.View.Fragments;
+
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import androidx.fragment.app.Fragment;
+import com.example.carapp.R;
+
+public class FragmentMap extends Fragment
+{
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //Variables
+
+    private WebView webView;
+
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //On create and initialization
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState)
+    {
+        View view= inflater.inflate(R.layout.fragment_map, container, false);
+        initializeWebView(view);
+        setWebUrl(32.0853+""+34.7818);
+        return view;
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private void initializeWebView(View view)
+    {
+        webView =view.findViewById(R.id.Frag_WEBV_webView);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+    }
+
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //Set url
+
+    public void setWebUrl(String location)
+    {
+        String urlStart = "https://www.google.com/maps/place/";
+        webView.loadUrl(urlStart+location);
+    }
+
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+}

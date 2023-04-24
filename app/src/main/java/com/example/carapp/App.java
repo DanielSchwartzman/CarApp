@@ -1,0 +1,25 @@
+package com.example.carapp;
+
+import android.app.Application;
+import com.example.carapp.General_Singletons.MySP;
+import com.example.carapp.General_Singletons.SignalGenerator;
+
+public class App extends Application
+{
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //onCreate method
+
+    @Override
+    public void onCreate()
+    {
+        super.onCreate();
+        MySP.init(this);
+        SignalGenerator.init(this);
+    }
+
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+}

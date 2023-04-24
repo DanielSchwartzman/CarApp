@@ -1,33 +1,22 @@
 package com.example.carapp.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.carapp.Data.HighScore;
-import com.example.carapp.Data.MySP;
+import com.example.carapp.General_Singletons.MySP;
 import com.example.carapp.Model.GameManager;
 import com.example.carapp.R;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.Queue;
+import com.example.carapp.General_Singletons.SignalGenerator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -52,9 +41,6 @@ public class CarTrack extends AppCompatActivity {
     private SensorEventListener gyroEventListener;
     private float rollAngle = 0.0f;
 
-    //Audio
-    private MediaPlayer mediaPlayer;
-
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,21 +52,24 @@ public class CarTrack extends AppCompatActivity {
     //OnCreate/OnPause
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_track);
         gameMode = getIntent().getStringExtra("GameMode");
         initializeView();
         model = new GameManager(this);
-        mediaPlayer = MediaPlayer.create(this, R.raw.crash_sound);
 
         chooseTimer();
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
-        if (timer != null) {
+        MySP.saveToSharedPref();
+        if (timer != null)
+        {
             timer.cancel();
             timer = null;
         }
@@ -89,9 +78,11 @@ public class CarTrack extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
-        if (timer == null) {
+        if (timer == null)
+        {
             chooseTimer();
         }
         if (sensorManager != null)
@@ -130,7 +121,8 @@ public class CarTrack extends AppCompatActivity {
     //////////////////////////////////////////////////
     //Sensor methods
 
-    private void initializeSensor() {
+    private void initializeSensor()
+    {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
@@ -253,17 +245,18 @@ public class CarTrack extends AppCompatActivity {
 
     public void removeHeart()
     {
-        if (currentLife > 1)
+        if (currentLife > 0)
         {
             hearts[currentLife - 1].setVisibility(View.GONE);
             currentLife--;
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-            playCrash();
+            SignalGenerator.getInstance().toast("Crash",Toast.LENGTH_SHORT);
+            SignalGenerator.getInstance().vibrate(500);
+            SignalGenerator.getInstance().playCrash(this);
         }
-        else
+        if(currentLife<=0)
         {
-            checkHighScore(model.getDistance(),0,0);
+            MySP.addNewHighScore(model.getDistance(),0,0);
+            MySP.saveToSharedPref();
             Intent switchToLeaderBoardActivity = new Intent(getApplicationContext(), LeaderBoard.class);
             startActivity(switchToLeaderBoardActivity);
             finish();
@@ -275,62 +268,6 @@ public class CarTrack extends AppCompatActivity {
             hearts[currentLife].setVisibility(View.VISIBLE);
             currentLife++;
         }
-    }
-
-    //////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////
-    //Check for highScore
-
-    public void checkHighScore(int distance,double longitude,double latitude)
-    {
-        String fromSP =  MySP.getInstance().getString("leaderBoard","");
-        if(!Objects.equals(fromSP, ""))
-        {
-            Type listOfMyClassObject = new TypeToken<Queue<HighScore>>() {}.getType();
-            Queue<HighScore> savedQueue = new Gson().fromJson(fromSP,listOfMyClassObject);
-            if(savedQueue!=null)
-            {
-                if (!savedQueue.peek().isHigherThan(distance))
-                {
-                    HighScore highScore = new HighScore(distance, longitude, latitude);
-                    savedQueue.add(highScore);
-                    if(savedQueue.size()>=10)
-                        savedQueue.remove();
-                    String toSp=new Gson().toJson(savedQueue);
-                    MySP.getInstance().putString("leaderBoard",toSp);
-                }
-            }
-        }
-        else
-        {
-            Queue<HighScore> highScores=new LinkedList<>();
-            HighScore highScore = new HighScore(distance, longitude, latitude);
-            highScores.add(highScore);
-            String toSp=new Gson().toJson(highScores);
-            MySP.getInstance().putString("leaderBoard",toSp);
-        }
-    }
-
-    //////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////
-    //Play crush sound
-
-    private void playCrash() {
-        if (mediaPlayer != null) mediaPlayer.release();
-        mediaPlayer = MediaPlayer.create(this, R.raw.crash_sound);
-        mediaPlayer.start();
     }
 
     //////////////////////////////////////////////////

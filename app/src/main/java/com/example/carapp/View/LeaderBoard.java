@@ -2,8 +2,8 @@ package com.example.carapp.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import com.example.carapp.Fragments.FragmentList;
-import com.example.carapp.Fragments.FragmentMap;
+import com.example.carapp.View.Fragments.FragmentList;
+import com.example.carapp.View.Fragments.FragmentMap;
 import com.example.carapp.R;
 
 public class LeaderBoard extends AppCompatActivity
