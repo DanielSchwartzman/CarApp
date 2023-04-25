@@ -255,7 +255,7 @@ public class CarTrack extends AppCompatActivity {
         }
         if(currentLife<=0)
         {
-            MySP.addNewHighScore(model.getDistance(),0,0);
+            MySP.getInstance().addNewHighScore(model.getDistance());
             MySP.saveToSharedPref();
             Intent switchToLeaderBoardActivity = new Intent(getApplicationContext(), LeaderBoard.class);
             startActivity(switchToLeaderBoardActivity);

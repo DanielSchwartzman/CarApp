@@ -7,8 +7,8 @@ import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.widget.Toast;
-
 import com.example.carapp.R;
+import com.example.carapp.View.Fragments.FragmentMap;
 
 public class SignalGenerator
 {
@@ -22,6 +22,8 @@ public class SignalGenerator
     private final Context context;
     private static Vibrator vibrator;
     private static MediaPlayer mediaPlayer;
+
+    private FragmentMap fragmentMap;
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -95,6 +97,26 @@ public class SignalGenerator
             //deprecated in API 26
             vibrator.vibrate(length);
         }
+    }
+
+    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //Ugly callback method
+
+    public void setFragmentMap(FragmentMap fragmentMap)
+    {
+        this.fragmentMap=fragmentMap;
+    }
+
+    public FragmentMap getFragmentMap()
+    {
+        return fragmentMap;
     }
 
     //////////////////////////////////////////////////

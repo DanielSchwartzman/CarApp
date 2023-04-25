@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.carapp.General_Singletons.SignalGenerator;
 import com.example.carapp.HighScore.HighScoreList;
 import com.example.carapp.R;
 
@@ -57,6 +58,8 @@ public class HighScoreAdapter extends RecyclerView.Adapter<HighScoreViewHolder>
         String pos=addPostfix((position+1)+"");
         holder.position.setText(pos);
         holder.txt.setText( highScoreList.getAllScores().get(position).getScoreAsString());
+        holder.button.setOnClickListener(View->
+                SignalGenerator.getInstance().getFragmentMap().setWebUrl( highScoreList.getAllScores().get(position).getLocationAsString()));
     }
 
     @Override
