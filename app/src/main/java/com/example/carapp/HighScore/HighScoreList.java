@@ -57,9 +57,9 @@ public class HighScoreList
         }
 
         allScores.sort(new HighsScoreComparator());
-        if(allScores.size()>10)
+        if(allScores.size()==12)
         {
-            allScores.remove(10);
+            allScores.remove(allScores.size()-1);
         }
     }
 

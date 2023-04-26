@@ -114,9 +114,9 @@ public class SignalGenerator
         this.fragmentMap=fragmentMap;
     }
 
-    public FragmentMap getFragmentMap()
+    public void setFocusOnLocation(double longitude,double latitude)
     {
-        return fragmentMap;
+        fragmentMap.setFocusOnLocation(longitude,latitude);
     }
 
     //////////////////////////////////////////////////

@@ -59,7 +59,7 @@ public class HighScoreAdapter extends RecyclerView.Adapter<HighScoreViewHolder>
         holder.position.setText(pos);
         holder.txt.setText( highScoreList.getAllScores().get(position).getScoreAsString());
         holder.button.setOnClickListener(View->
-                SignalGenerator.getInstance().getFragmentMap().setWebUrl( highScoreList.getAllScores().get(position).getLocationAsString()));
+                SignalGenerator.getInstance().setFocusOnLocation(highScoreList.getAllScores().get(position).getLongitude(),highScoreList.getAllScores().get(position).getLatitude()));
     }
 
     @Override

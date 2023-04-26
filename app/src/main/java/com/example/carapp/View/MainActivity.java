@@ -9,6 +9,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.carapp.General_Singletons.MySP;
+import com.example.carapp.General_Singletons.SignalGenerator;
 import com.example.carapp.R;
 
 public class MainActivity extends AppCompatActivity
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MySP.init(this);
+        SignalGenerator.init(this);
         radioGroup=findViewById(R.id.main_RGP_radioGroup);
         initializeButtons();
         MySP.getInstance().checkPermission(this);

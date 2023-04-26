@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.widget.Toast;
-
 import androidx.core.app.ActivityCompat;
 import com.example.carapp.HighScore.HighScoreList;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -112,13 +111,13 @@ public class MySP
     {
         if(ActivityCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED)
         {
-            permission=true;
+            System.out.println("Location permission granted");
         }
         else
         {
             ActivityCompat.requestPermissions(activity,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},44);
-            permission=true;//Assumption: Permission granted
         }
+        permission=true;//Assuming that user gave permission for location
     }
 
     @SuppressLint("MissingPermission")
@@ -129,7 +128,8 @@ public class MySP
             fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task ->
             {
                 Location location = task.getResult();
-                if (location != null) {
+                if (location != null)
+                {
                     highScoreList.addNewHighScore(score, location.getLongitude(), location.getLatitude());
                 }
                 else

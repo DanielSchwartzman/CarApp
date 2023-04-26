@@ -46,7 +46,8 @@ public class HighScore
     {
         return (score+"");
     }
-    public String getLocationAsString(){return (latitude+","+longitude);}
+    public double getLongitude(){return longitude;}
+    public double getLatitude(){return latitude;}
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////

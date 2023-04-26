@@ -1,23 +1,29 @@
 package com.example.carapp.View.Fragments;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import com.example.carapp.R;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class FragmentMap extends Fragment
+public class FragmentMap extends Fragment implements OnMapReadyCallback
 {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////
     //Variables
 
-    private WebView webView;
+    private GoogleMap mMap;
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,18 +40,15 @@ public class FragmentMap extends Fragment
                              Bundle savedInstanceState)
     {
         View view= inflater.inflate(R.layout.fragment_map, container, false);
-        initializeWebView(view);
-        setWebUrl(32.0853+""+34.7818);
+        SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        if (supportMapFragment != null) {
+            supportMapFragment.getMapAsync(googleMap -> mMap = googleMap);
+        }
         return view;
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    private void initializeWebView(View view)
-    {
-        webView =view.findViewById(R.id.Frag_WEBV_webView);
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-    }
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {}
 
     //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,10 +60,13 @@ public class FragmentMap extends Fragment
     //////////////////////////////////////////////////
     //Set url
 
-    public void setWebUrl(String location)
+    public void setFocusOnLocation(double longitude, double latitude)
     {
-        String urlStart = "https://www.google.com/maps/place/";
-        webView.loadUrl(urlStart+location);
+        mMap.clear();
+        LatLng marker = new LatLng(latitude, longitude);
+        mMap.addMarker(new MarkerOptions()
+                .position(marker));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(marker));
     }
 
     //////////////////////////////////////////////////
